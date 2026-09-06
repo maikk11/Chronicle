@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronicle", "Chronicle\Chronicle.csproj", "{0C13F6F8-7BDE-4192-A7E2-BC3A0A56ABE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chronicle.Tests", "Chronicle.Tests\Chronicle.Tests.csproj", "{4F88DBBA-93F1-479C-A3F7-31CAC67D321E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{0C13F6F8-7BDE-4192-A7E2-BC3A0A56ABE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C13F6F8-7BDE-4192-A7E2-BC3A0A56ABE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C13F6F8-7BDE-4192-A7E2-BC3A0A56ABE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F88DBBA-93F1-479C-A3F7-31CAC67D321E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F88DBBA-93F1-479C-A3F7-31CAC67D321E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F88DBBA-93F1-479C-A3F7-31CAC67D321E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F88DBBA-93F1-479C-A3F7-31CAC67D321E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
