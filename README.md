@@ -80,7 +80,13 @@ The application is served at `http://localhost:5267`.
 
 ## Running the tests
 
-<!-- PLACEHOLDER: to be filled in SETUP-05 -->
+The test project lives in `Chronicle.Tests` and uses xUnit. Run the suite from the repository root:
+
+```bash
+dotnet test
+```
+
+The same command runs on every pull request, so a failing test blocks the merge.
 
 ## Architecture
 
