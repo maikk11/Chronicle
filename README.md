@@ -2,6 +2,7 @@
 
 [![Build](https://github.com/maikk11/Chronicle/actions/workflows/ci.yml/badge.svg)](https://github.com/maikk11/Chronicle/actions/workflows/ci.yml)
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Chronicle is an editorial platform for a newsroom. Writers submit articles,
@@ -9,18 +10,23 @@ revisors accept or reject them before publication, and readers browse what has
 been accepted, by category and by author.
 
 > **Project status: early setup.** The repository currently contains the
-> scaffolded ASP.NET Core MVC application and the project infrastructure
-> (CI pipeline, issue templates, branch protections). None of the editorial
-> features described above are implemented yet — see [Roadmap](#roadmap).
+> scaffolded ASP.NET Core MVC application, the data layer (entity models, the
+> EF Core `DbContext`, migrations, and category seeding) and the project
+> infrastructure (CI pipeline, issue templates, branch protections). None of the
+> editorial features described above are implemented yet — see [Roadmap](#roadmap).
 
 ## Requirements
 
 - [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later
+- MySQL 8.0
+- dotnet-ef
 
 ## Tech stack
 
 - ASP.NET Core MVC
 - Razor Views
+- Entity Framework Core (8.0.13)
+- MySQL with Pomelo (8.0)
 
 ## Getting started
 
@@ -65,18 +71,26 @@ To confirm what you have stored:
 dotnet user-secrets list
 ```
 
-**The connection string is not needed yet.** The application has no database
-access at this stage, so it starts and runs without it. The key is documented
-here because the mechanism is in place and the connection string becomes
-required once Entity Framework and the data layer are added.
+### 3. Apply the migrations
 
-### 3. Run
+With the connection string in place, create the database schema. Run this from
+the **repository root**, pointing at the project:
+
+```bash
+dotnet ef database update --project Chronicle
+```
+
+### 4. Run
 
 ```bash
 dotnet run --project Chronicle
 ```
 
 The application is served at `http://localhost:5267`.
+
+On its first startup the application populates the category table. The
+migrations create the schema only, so the categories appear after this step,
+not after step 3.
 
 ## Running the tests
 
