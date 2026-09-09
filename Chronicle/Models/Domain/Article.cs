@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Identity;
 
 namespace Chronicle.Models.Domain;
 public class Article
@@ -13,10 +15,21 @@ public class Article
     public string Subtitle {get;set;} = string.Empty;
     [Required]
     public string Body {get;set;} = string.Empty;
-    public DateTime CreatedAt {get;set;} = DateTime.UtcNow;
     // null means article not published yet
     public DateTime? PublishDate {get;set;}
-    public long CategoryId { get; set; }
+    public DateTime CreatedAt {get;set;} = DateTime.UtcNow;
+    [ValidateNever]
+    public string? UserId { get; set; }
+
+    [ForeignKey("UserId")]
+    [ValidateNever]
+    public IdentityUser? User { get; set; }
+
+    [Required(ErrorMessage = "The category is mandatory")]
+    [Range(1, long.MaxValue, ErrorMessage = "Select a valid category")]
+    public long? CategoryId { get; set; }
     [ForeignKey("CategoryId")]
+    [ValidateNever]
     public Category? Category { get; set; }
+    public bool? IsAccepted { get; set; }
 }
