@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Chronicle.Data;
-using Chronicle.Models.Domain;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,29 @@ builder.Services.AddDbContext<ChronicleDbContext>(options =>
         // Open a connection at startup of application. In production will need to be replaced with explicit version.
         ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
     ));
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+});
+
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<ChronicleDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+    options.User.AllowedUserNameCharacters =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+});
 
 var app = builder.Build();
 
@@ -28,36 +51,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-// At the first startup of application insert categories for the articles.
-// At the first startup of the application, insert the categories for the articles.
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ChronicleDbContext>();
-    if (!db.Categories.Any())
-    {
-        db.Categories.AddRange(
-            new Category { Name = "News" },
-            new Category { Name = "Politics" },
-            new Category { Name = "Economy" },
-            new Category { Name = "World" },
-            new Category { Name = "Culture" },
-            new Category { Name = "Entertainment" },
-            new Category { Name = "Sport" },
-            new Category { Name = "Technology" },
-            new Category { Name = "Health" },
-            new Category { Name = "Environment" },
-            new Category { Name = "Lifestyle" }
-        );
-
-        db.SaveChanges();
-    }
-}
 
 app.Run();

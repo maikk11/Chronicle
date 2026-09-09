@@ -9,11 +9,13 @@ Chronicle is an editorial platform for a newsroom. Writers submit articles,
 revisors accept or reject them before publication, and readers browse what has
 been accepted, by category and by author.
 
-> **Project status: early setup.** The repository currently contains the
+> **Project status: early development.** The repository currently contains the
 > scaffolded ASP.NET Core MVC application, the data layer (entity models, the
-> EF Core `DbContext`, migrations, and category seeding) and the project
-> infrastructure (CI pipeline, issue templates, branch protections). None of the
-> editorial features described above are implemented yet — see [Roadmap](#roadmap).
+> EF Core `DbContext`, migrations, and category seeding), authentication
+> (registration, login, and logout) and the project infrastructure (CI pipeline,
+> issue templates, branch protections). The editorial features described above —
+> article submission, review, and public browsing — are not implemented yet; see
+> [Roadmap](#roadmap).
 
 ## Requirements
 
@@ -80,6 +82,9 @@ the **repository root**, pointing at the project:
 dotnet ef database update --project Chronicle
 ```
 
+The category data is seeded through the migrations, so the category table is
+already populated once this step completes.
+
 ### 4. Run
 
 ```bash
@@ -87,10 +92,6 @@ dotnet run --project Chronicle
 ```
 
 The application is served at `http://localhost:5267`.
-
-On its first startup the application populates the category table. The
-migrations create the schema only, so the categories appear after this step,
-not after step 3.
 
 ## Running the tests
 
@@ -110,9 +111,11 @@ The same command runs on every pull request, so a failing test blocks the merge.
 
 Planned functionality, tracked as user stories in the
 [issue tracker](https://github.com/maikk11/Chronicle/issues).
-**None of it is implemented yet.**
+Work has started on **US1**; nothing else below is implemented yet.
 
 - [ ] **US1** — Registration, login, and article submission by writers
+  *(in progress: registration, login and logout are in place; article
+  submission is not)*
 - [ ] **US2** — Public article listing and detail pages, browsable by category and author
 - [ ] **US3** — Admin, Revisor and Writer roles; team applications; article review
 - [ ] **US4** — Full-text search across accepted articles
