@@ -12,10 +12,10 @@ been accepted, by category and by author.
 > **Project status: early development.** The repository currently contains the
 > scaffolded ASP.NET Core MVC application, the data layer (entity models, the
 > EF Core `DbContext`, migrations, and category seeding), authentication
-> (registration, login, and logout) and the project infrastructure (CI pipeline,
-> issue templates, branch protections). The editorial features described above —
-> article submission, review, and public browsing — are not implemented yet; see
-> [Roadmap](#roadmap).
+> (registration, login, and logout), article creation by writers, and the
+> project infrastructure (CI pipeline, issue templates, branch protections).
+> The remaining editorial features — article review, publication, and public
+> browsing — are not implemented yet; see [Roadmap](#roadmap).
 
 ## Requirements
 
@@ -111,11 +111,9 @@ The same command runs on every pull request, so a failing test blocks the merge.
 
 Planned functionality, tracked as user stories in the
 [issue tracker](https://github.com/maikk11/Chronicle/issues).
-Work has started on **US1**; nothing else below is implemented yet.
+**US1** is complete; the remaining user stories below are not implemented yet.
 
-- [ ] **US1** — Registration, login, and article submission by writers
-  *(in progress: registration, login and logout are in place; article
-  submission is not)*
+- [x] **US1** — Registration, login, and article submission by writers
 - [ ] **US2** — Public article listing and detail pages, browsable by category and author
 - [ ] **US3** — Admin, Revisor and Writer roles; team applications; article review
 - [ ] **US4** — Full-text search across accepted articles
