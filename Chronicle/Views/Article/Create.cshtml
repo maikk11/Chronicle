@@ -1,0 +1,97 @@
+@model Chronicle.Models.Domain.Article
+
+@{
+    ViewData["Title"] = "Inserisci un articolo";
+    var categories = ViewBag.Categories as IEnumerable<Chronicle.Models.ViewModels.CategoryDto>;
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="p-5" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">
+                <h1 class="text-white fw-bold mb-0">Create new article</h1>
+            </div>
+
+            <div class="card-body p-5">
+                <form asp-controller="Article" asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label fw-semibold">Title</label>
+                            <input asp-for="Title"
+                                   class="form-control form-control-lg border-2"
+                                   placeholder="Insert title..."
+                                   style="border-radius: 12px;" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="file" class="form-label fw-semibold">Cover immage</label>
+                            <input type="file"
+                                   id="file"
+                                   name="file"
+                                   class="form-control border-2"
+                                   style="border-radius: 12px;"
+                                   accept="image/*" />
+                            <span class="text-muted small">Select image for the article (optional)</span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Subtitle" class="form-label fw-semibold">Subtitle</label>
+                            <input asp-for="Subtitle"
+                                   class="form-control border-2"
+                                   placeholder="A brief summary of the article..."
+                                   style="border-radius: 12px;" />
+                            <span asp-validation-for="Subtitle" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CategoryId" class="form-label fw-semibold">Category</label>
+                            <select asp-for="CategoryId" class="form-select border-2" style="border-radius: 12px;">
+                                <option value="">Select category</option>
+                                @if (categories != null)
+                                {
+                                    foreach (var cat in categories)
+                                    {
+                                        <option value="@cat.Id">@cat.Name</option>
+                                    }
+                                }
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PublishDate" class="form-label fw-semibold">Publication date</label>
+                            <input asp-for="PublishDate"
+                                   type="date"
+                                   class="form-control border-2"
+                                   style="border-radius: 12px;" />
+                            <span asp-validation-for="PublishDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Body" class="form-label fw-semibold">Text body</label>
+                            <textarea asp-for="Body"
+                                      class="form-control border-2"
+                                      rows="10"
+                                      placeholder="Write the content of your article here..."
+                                      style="border-radius: 12px;"></textarea>
+                            <span asp-validation-for="Body" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12 mt-5 d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fa-solid fa-paper-plane me-2"></i>Publish article
+                            </button>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-danger btn-lg">
+                                <i class="fa-solid fa-trash me-2"></i>Delete
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

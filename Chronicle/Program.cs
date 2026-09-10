@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Chronicle.Data;
 using Microsoft.AspNetCore.Identity;
+using Chronicle.Repositories;
+using Chronicle.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.User.AllowedUserNameCharacters =
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 });
+
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ArticleService>();
+builder.Services.AddScoped<CategoryService>();
 
 var app = builder.Build();
 
