@@ -27,6 +27,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Article" asp-action="Create">New article</a>
+                            </li>
+                        }
                           <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark"
                             href="#"
@@ -47,11 +53,9 @@
                                 @if (signInManager.IsSignedIn(User))
                                 {
                                     <li>
-                                        <a class="dropdown-item"
-                                        asp-controller="Account"
-                                        asp-action="Logout">
-                                            Logout
-                                        </a>
+                                        <form asp-controller="Account" asp-action="Logout" method="post">
+                                            <button type="submit" class="dropdown-item">Logout</button>
+                                        </form>
                                     </li>
                                 }
                                 else
@@ -80,6 +84,15 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
             @RenderBody()
         </main>
     </div>
