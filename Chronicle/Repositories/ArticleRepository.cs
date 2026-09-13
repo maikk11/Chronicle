@@ -15,6 +15,7 @@ public class ArticleRepository : IArticleRepository
         return await _chronicleDbContext.Articles
             .Include(a => a.Category)
             .Include(a => a.User)
+            .Include(a => a.Image)
             .ToListAsync();
     }
     public async Task<Article?> GetAsync(long id)
@@ -22,6 +23,7 @@ public class ArticleRepository : IArticleRepository
         return await _chronicleDbContext.Articles
             .Include(a => a.Category)
             .Include(a => a.User)
+            .Include(a => a.Image)
             .FirstOrDefaultAsync(a => a.Id == id);
     }
     public async Task<Article?> GetByTitleAsync(string title)
@@ -40,6 +42,7 @@ public class ArticleRepository : IArticleRepository
         return await _chronicleDbContext.Articles
             .Include(x => x.User)
             .Include(x => x.Category)
+            .Include(a => a.Image)
             .Where(a =>
                 EF.Functions.Like(a.Title, pattern) ||
                 EF.Functions.Like(a.Subtitle, pattern) ||
@@ -87,6 +90,7 @@ public class ArticleRepository : IArticleRepository
             .Where(a => a.CategoryId == categoryId)
             .Include(a => a.Category)
             .Include(a => a.User)
+            .Include(a => a.Image)
             .ToListAsync();
     }
     public async Task<IEnumerable<Article>> GetByUserAsync(string userId)
@@ -95,6 +99,7 @@ public class ArticleRepository : IArticleRepository
             .Where(a => a.UserId == userId)
             .Include(a => a.Category)
             .Include(a => a.User)
+            .Include(a => a.Image)
             .ToListAsync();
     }
 }
