@@ -10,15 +10,14 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
 {
     private readonly IArticleRepository articleRepository;
     private readonly UserManager<IdentityUser> userManager;
-
+    private readonly IImageService imageService;
     public UserManager<IdentityUser> UserManager => userManager;
 
-    public ArticleService(
-        IArticleRepository articleRepository,
-        UserManager<IdentityUser> userManager)
+    public ArticleService(IArticleRepository articleRepository, UserManager<IdentityUser> userManager, IImageService imageService)
     {
         this.articleRepository = articleRepository;
         this.userManager = userManager;
+        this.imageService = imageService;
     }
 
     public async Task<ArticleDto> CreateAsync(Article article, ClaimsPrincipal principal, IFormFile? file)
@@ -30,6 +29,15 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
         }
         article.IsAccepted = null;
         var savedArticle = await articleRepository.AddAsync(article);
+        string? imageUrl = null;
+        if (file != null && file.Length > 0)
+        {
+            imageUrl = await imageService.UploadAsync(file);
+        }
+        if (imageUrl != null)
+        {
+            await imageService.SaveToDbAsync(imageUrl, savedArticle.Id);
+        }
         var finalArticle = await articleRepository.GetAsync(savedArticle.Id);
         return new ArticleDto
         {
@@ -41,7 +49,8 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
             CreatedAt = finalArticle.CreatedAt,
             User = finalArticle.User,
             Category = finalArticle.Category,
-            IsAccepted = finalArticle.IsAccepted
+            IsAccepted = finalArticle.IsAccepted,
+            Image = finalArticle.Image
         };
     }
 
@@ -58,7 +67,8 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
             CreatedAt = a.CreatedAt,
             IsAccepted = a.IsAccepted,
             User = a.User,
-            Category = a.Category
+            Category = a.Category,
+            Image = a.Image
         }).ToList();
     }
 
@@ -79,7 +89,8 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
             PublishDate = article.PublishDate,
             IsAccepted = article.IsAccepted,
             User = article.User,
-            Category = article.Category
+            Category = article.Category,
+            Image = article.Image
         };
     }
 
