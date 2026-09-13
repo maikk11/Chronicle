@@ -31,5 +31,7 @@ public class Article
     [ForeignKey("CategoryId")]
     [ValidateNever]
     public Category? Category { get; set; }
+    [ValidateNever]
+    public Image? Image { get;set; }
     public bool? IsAccepted { get; set; }
 }

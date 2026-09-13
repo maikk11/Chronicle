@@ -13,4 +13,5 @@ public class ArticleDto
     public bool? IsAccepted { get; set; }
     public IdentityUser? User { get; set; }
     public Category? Category { get; set; }
+    public Image? Image { get; set; }
 }
