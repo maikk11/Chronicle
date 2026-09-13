@@ -9,6 +9,7 @@ public class ChronicleDbContext : IdentityDbContext<IdentityUser>
     public ChronicleDbContext(DbContextOptions<ChronicleDbContext> options) : base(options){}
     public DbSet<Article> Articles {get;set;} = null!;
     public DbSet<Category> Categories {get;set;} = null!;
+    public DbSet<Image> Images {get;set;} = null!;
      protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -38,5 +39,10 @@ public class ChronicleDbContext : IdentityDbContext<IdentityUser>
             .WithMany()
             .HasForeignKey(a => a.UserId)
             .OnDelete(DeleteBehavior.SetNull);
+        modelBuilder.Entity<Article>()
+            .HasOne(a => a.Image)
+            .WithOne(i => i.Article)
+            .HasForeignKey<Image>(i => i.ArticleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
