@@ -1,7 +1,7 @@
 @model Chronicle.Models.Domain.Article
 
 @{
-    ViewData["Title"] = "Inserisci un articolo";
+    ViewData["Title"] = "Insert an article";
     var categories = ViewBag.Categories as IEnumerable<Chronicle.Models.ViewModels.CategoryDto>;
 }
 
@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="col-12">
-                            <label for="file" class="form-label fw-semibold">Cover immage</label>
+                            <label for="file" class="form-label fw-semibold">Cover image</label>
                             <input type="file"
                                    id="file"
                                    name="file"
@@ -59,15 +59,6 @@
                             <span asp-validation-for="CategoryId" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-6">
-                            <label asp-for="PublishDate" class="form-label fw-semibold">Publication date</label>
-                            <input asp-for="PublishDate"
-                                   type="date"
-                                   class="form-control border-2"
-                                   style="border-radius: 12px;" />
-                            <span asp-validation-for="PublishDate" class="text-danger small"></span>
-                        </div>
-
                         <div class="col-12">
                             <label asp-for="Body" class="form-label fw-semibold">Text body</label>
                             <textarea asp-for="Body"
@@ -79,10 +70,10 @@
                         </div>
                         <div class="col-12 mt-5 d-grid gap-2">
                             <button type="submit" class="btn btn-success btn-lg">
-                                <i class="fa-solid fa-paper-plane me-2"></i>Publish article
+                                Publish article
                             </button>
-                            <a asp-controller="Home" asp-action="Index" class="btn btn-danger btn-lg">
-                                <i class="fa-solid fa-trash me-2"></i>Delete
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-warning btn-lg">
+                                Cancel
                             </a>
                         </div>
                     </div>
