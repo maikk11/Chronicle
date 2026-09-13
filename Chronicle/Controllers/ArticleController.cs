@@ -19,7 +19,7 @@ public class ArticleController : Controller
     public async Task<IActionResult> Index()
     {
         var articles = await articleService.ReadAllAsync();
-        ViewBag.Title = "Tutti gli articoli";
+        ViewBag.Title = "All articles";
         return View(articles);
     }
 
@@ -39,7 +39,7 @@ public class ArticleController : Controller
         if (ModelState.IsValid)
         {
             await articleService.CreateAsync(article, User, file);
-            TempData["SuccessMessage"] = "Articolo aggiunto con successo ed inviato in revisione!";
+            TempData["SuccessMessage"] = "Article successfully added and submitted for review!!";
             return RedirectToAction("Index", "Home");
         }
         ViewBag.Categories = await categoryService.ReadAllAsync();
