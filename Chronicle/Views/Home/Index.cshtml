@@ -1,8 +1,72 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<Chronicle.Models.ViewModels.ArticleDto>
+
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row mt-5">
+    <div class="col-12 mb-4 d-flex justify-content-between align-items-end">
+        <div>
+            <h2 class="fw-bold mb-0">Latest news</h2>
+            <p class="text-muted small">Stay up to date with the most recent articles</p>
+        </div>
+
+        <a asp-controller="Article" asp-action="Index"
+           class="btn btn-link text-primary fw-bold text-decoration-none">
+            See all &rarr;
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var article in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden transition-hover">
+                    <div style="height: 200px; background: #cbd5e1; overflow: hidden;">
+                        @if (article.Image != null)
+                        {
+                            <img src="@article.Image.Path" class="w-100 h-100" style="object-fit: cover;" alt="@article.Title">
+                        }
+                        else
+                        {
+                            <img src="/images/default.jpg" class="w-100 h-100" style="object-fit: cover;" alt="Default image">
+                        }
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <span class="badge bg-light text-primary mb-2 align-self-start">
+                            @(article.Category?.Name ?? "Uncategorized")
+                        </span>
+
+                        <h5 class="card-title fw-bold">@article.Title</h5>
+                        <p class="text-muted small flex-grow-1">@article.Subtitle</p>
+
+                        <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id"
+                           class="btn btn-outline-primary w-100 rounded-pill mt-3">
+                            Read
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-5">
+            <h4>No articles published yet</h4>
+            <p class="text-muted">New articles appear here once they have been reviewed.</p>
+        </div>
+    }
 </div>
+
+<style>
+    .transition-hover {
+        transition: all 0.3s ease;
+    }
+
+    .transition-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>

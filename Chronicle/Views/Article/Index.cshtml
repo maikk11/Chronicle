@@ -1,0 +1,81 @@
+@model IEnumerable<Chronicle.Models.ViewModels.ArticleDto>
+
+@{
+    ViewData["Title"] = ViewBag.Title ?? "All Articles";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-12 text-center mb-5">
+        <h1 class="display-4 fw-bold">@ViewData["Title"]</h1>
+        <div class="mx-auto bg-primary" style="width: 80px; height: 5px; border-radius: 10px;"></div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var article in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                        <div class="position-relative">
+                            @if (article.Image != null)
+                            {
+                                <img src="@article.Image.Path" class="card-img-top" style="height: 220px; object-fit: cover;" alt="@article.Title">
+                            }
+                            else
+                            {
+                                <img src="/images/default.jpg" class="card-img-top" style="height: 220px; object-fit: cover;" alt="Default image">
+                            }
+
+                            <span class="badge bg-light text-primary position-absolute top-0 end-0 m-3">
+                                @(article.Category?.Name ?? "Uncategorized")
+                            </span>
+                        </div>
+
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="card-title fw-bold">@article.Title</h5>
+                            <p class="card-text text-muted flex-grow-1">@article.Subtitle</p>
+
+                            <div class="mt-auto">
+                                <div class="mb-3">
+                                    @if (article.User != null)
+                                    {
+                                        <a asp-controller="Account"
+                                           asp-action="Search"
+                                           asp-route-id="@article.User.Id"
+                                           class="text-decoration-none text-dark fw-semibold small">
+                                            @article.User.UserName
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted fw-semibold small">User removed</span>
+                                    }
+
+                                    <div class="text-muted" style="font-size: 0.75rem;">
+                                        @((article.PublishDate ?? article.CreatedAt).ToString("dd MMM yyyy"))
+                                    </div>
+                                </div>
+
+                                <a asp-controller="Article"
+                                   asp-action="Details"
+                                   asp-route-id="@article.Id"
+                                   class="btn btn-primary w-100 py-2">
+                                    Read more
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="col-12 text-center py-5">
+            <h3>No articles found</h3>
+            <p class="text-muted">Come back later to discover new content.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary rounded-pill px-4 mt-3">Back to Home</a>
+        </div>
+    }
+</div>

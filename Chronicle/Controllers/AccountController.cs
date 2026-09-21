@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Chronicle.Models.ViewModels;
+using Chronicle.Services;
 
 namespace Chronicle.Controllers;
 
@@ -8,10 +9,12 @@ public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> userManager;
     private readonly SignInManager<IdentityUser> signInManager;
-    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    private readonly Services.ArticleService articleService;
+    public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, Services.ArticleService articleService)
     {
         this.userManager = userManager;
         this.signInManager = signInManager;
+        this.articleService = articleService;
     }
     [HttpGet]
     public IActionResult Login()
@@ -95,5 +98,25 @@ public class AccountController : Controller
     public IActionResult AccessDenied()
     {
         return View();
+    }
+    [HttpGet]
+    [Route("Account/Search/{id}")]
+    public async Task<IActionResult> Search(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var articles = (await articleService.ReadAllAsync())
+            .Where(a => a.User?.Id == id && a.IsAccepted == true)
+            .OrderByDescending(a => a.PublishDate ?? a.CreatedAt)
+            .ToList();
+
+        ViewBag.Title = $"Articoli scritti da: {user.UserName}";
+
+        return View("~/Views/Article/Index.cshtml", articles);
     }
 }

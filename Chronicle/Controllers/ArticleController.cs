@@ -16,11 +16,15 @@ public class ArticleController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
-        var articles = await articleService.ReadAllAsync();
-        ViewBag.Title = "Tutti gli articoli";
-        return View(articles);
+        var articles = (await articleService.ReadAllAsync())
+            .Where(a => a.IsAccepted == true)
+            .OrderByDescending(a => a.PublishDate ?? a.CreatedAt)
+            .ToList();
+            ViewBag.Title = "All articles";
+            return View(articles);
     }
 
     [Authorize]
@@ -39,10 +43,22 @@ public class ArticleController : Controller
         if (ModelState.IsValid)
         {
             await articleService.CreateAsync(article, User, file);
-            TempData["SuccessMessage"] = "Articolo aggiunto con successo ed inviato in revisione!";
+            TempData["SuccessMessage"] = "Article successfully added and submitted for review!!";
             return RedirectToAction("Index", "Home");
         }
         ViewBag.Categories = await categoryService.ReadAllAsync();
+        return View(article);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Details(long id)
+    {
+        var article = await articleService.ReadAsync(id);
+        if(article==null)
+        {
+            return NotFound();
+        }
         return View(article);
     }
 }

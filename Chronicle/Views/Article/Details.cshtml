@@ -1,0 +1,83 @@
+@model Chronicle.Models.ViewModels.ArticleDto
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-10">
+        <div class="mb-4">
+            <a href="javascript:history.back()" class="text-decoration-none text-muted fw-semibold">
+                &larr; Back
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden mb-5">
+            <div style="height: 450px; overflow: hidden;">
+                @if (Model.Image != null)
+                {
+                    <img src="@Model.Image.Path" class="w-100 h-100" style="object-fit: cover;" alt="@Model.Title">
+                }
+                else
+                {
+                    <img src="/images/default.jpg" class="w-100 h-100" style="object-fit: cover;" alt="Default image">
+                }
+            </div>
+
+            <div class="card-body p-5">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <span class="badge bg-light text-primary px-3 py-2 mb-3">
+                            @if (Model.Category != null)
+                            {
+                                <a asp-controller="Category" asp-action="Search" asp-route-categoryIdentifier="@Model.Category.Id"
+                                   class="text-decoration-none" style="color: inherit;">
+                                    @Model.Category.Name
+                                </a>
+                            }
+                            else
+                            {
+                                <span>Uncategorized</span>
+                            }
+                        </span>
+
+                        <h1 class="display-3 fw-bold mb-3">@Model.Title</h1>
+                        <p class="lead fw-normal text-muted mb-5">@Model.Subtitle</p>
+
+                        <div style="font-size: 1.1rem; line-height: 1.8; white-space: pre-wrap;">@Model.Body</div>
+                    </div>
+
+                    <div class="col-lg-4 mt-5 mt-lg-0">
+                        <div class="p-4 bg-light rounded-4 border">
+                            <h5 class="fw-bold mb-4">About the author</h5>
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                     style="width: 50px; height: 50px;">
+                                    @(Model.User?.UserName?[0] ?? '?')
+                                </div>
+                                <div>
+                                    @if (Model.User != null)
+                                    {
+                                        <a asp-controller="Account" asp-action="Search" asp-route-id="@Model.User.Id"
+                                           class="text-decoration-none text-dark d-block fw-bold">
+                                            @Model.User.UserName
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted d-block fw-bold">User removed</span>
+                                    }
+                                </div>
+                            </div>
+                            <hr class="my-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted">Date</span>
+                                <span class="fw-semibold">@((Model.PublishDate ?? Model.CreatedAt).ToString("dd MMM yyyy"))</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
