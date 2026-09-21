@@ -10,12 +10,11 @@ revisors accept or reject them before publication, and readers browse what has
 been accepted, by category and by author.
 
 > **Project status: early development.** The repository currently contains the
-> scaffolded ASP.NET Core MVC application, the data layer (entity models, the
-> EF Core `DbContext`, migrations, and category seeding), authentication
-> (registration, login, and logout), article creation by writers, and the
-> project infrastructure (CI pipeline, issue templates, branch protections).
-> The remaining editorial features — article review, publication, and public
-> browsing — are not implemented yet; see [Roadmap](#roadmap).
+> scaffolded ASP.NET Core MVC application, the data layer, authentication,
+> article creation with an optional cover image stored on Supabase, and the
+> public pages: home, article index, article detail, and filtering by category
+> and by author. Article review is not implemented yet, so no article is
+> accepted and the public pages stay empty until US3; see [Roadmap](#roadmap).
 
 ## Requirements
 
@@ -29,6 +28,7 @@ been accepted, by category and by author.
 - Razor Views
 - Entity Framework Core (8.0.13)
 - MySQL with Pomelo (8.0)
+- Supabase Storage for article images
 
 ## Getting started
 
@@ -60,6 +60,17 @@ project explicitly:
 ```bash
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your value>" --project Chronicle
 ```
+
+Article images are stored on Supabase. Create a project and a storage bucket,
+then set the project URL (without a trailing slash) and the API key:
+
+```bash
+dotnet user-secrets set "Supabase:Url" "https://<your-project>.supabase.co" --project Chronicle
+dotnet user-secrets set "Supabase:Key" "<your key>" --project Chronicle
+```
+
+The bucket paths live in `appsettings.json`. If your bucket is not named
+`ChronicleDB`, update `Supabase:Bucket` and `Supabase:PublicUrl` there.
 
 `appsettings.Development.example.json` is the reference for what needs to be
 set. It lists every configuration key the application expects, with placeholder
@@ -105,16 +116,28 @@ The same command runs on every pull request, so a failing test blocks the merge.
 
 ## Architecture
 
-<!-- PLACEHOLDER: to be filled once the layered structure exists -->
+The application is organised in layers:
+
+- **Controllers** handle HTTP requests and call the services. Some filtering
+  and ordering still happens in the controllers; moving it into the
+  repositories is tracked as technical debt. `AccountController` works
+  directly with ASP.NET Core Identity's `UserManager` and `SignInManager`.
+- **Services** hold the business rules and coordinate the repositories and Supabase Storage.
+- **Repositories** encapsulate data access through EF Core.
+- **`DbContext`** maps the entities to the MySQL schema.
+
+Views that display data receive DTOs mapped by the services. The article
+creation form binds directly to the `Article` entity, which is why its
+navigation properties are marked `[ValidateNever]`.
 
 ## Roadmap
 
 Planned functionality, tracked as user stories in the
 [issue tracker](https://github.com/maikk11/Chronicle/issues).
-**US1** is complete; the remaining user stories below are not implemented yet.
+**US1** and **US2** are complete; the remaining user stories below are not implemented yet.
 
 - [x] **US1** — Registration, login, and article submission by writers
-- [ ] **US2** — Public article listing and detail pages, browsable by category and author
+- [x] **US2** — Public article listing and detail pages, browsable by category and author
 - [ ] **US3** — Admin, Revisor and Writer roles; team applications; article review
 - [ ] **US4** — Full-text search across accepted articles
 - [ ] **US5** — Writers editing and deleting their own articles
