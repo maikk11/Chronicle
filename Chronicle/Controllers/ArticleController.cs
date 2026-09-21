@@ -16,11 +16,15 @@ public class ArticleController : Controller
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> Index()
     {
-        var articles = await articleService.ReadAllAsync();
-        ViewBag.Title = "All articles";
-        return View(articles);
+        var articles = (await articleService.ReadAllAsync())
+            .Where(a => a.IsAccepted == true)
+            .OrderByDescending(a => a.PublishDate ?? a.CreatedAt)
+            .ToList();
+            ViewBag.Title = "All articles";
+            return View(articles);
     }
 
     [Authorize]
@@ -43,6 +47,18 @@ public class ArticleController : Controller
             return RedirectToAction("Index", "Home");
         }
         ViewBag.Categories = await categoryService.ReadAllAsync();
+        return View(article);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Details(long id)
+    {
+        var article = await articleService.ReadAsync(id);
+        if(article==null)
+        {
+            return NotFound();
+        }
         return View(article);
     }
 }
