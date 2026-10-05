@@ -20,6 +20,7 @@ public class HomeController : Controller
         var articles = await articleService.ReadAllAsync();
 
         var latestArticles = articles
+            .Where(a => a.IsAccepted == true)
             .OrderByDescending(a => a.PublishDate ?? a.CreatedAt)
             .Take(3)
             .ToList();
