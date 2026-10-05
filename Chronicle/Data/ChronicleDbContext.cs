@@ -10,6 +10,7 @@ public class ChronicleDbContext : IdentityDbContext<IdentityUser>
     public DbSet<Article> Articles {get;set;} = null!;
     public DbSet<Category> Categories {get;set;} = null!;
     public DbSet<Image> Images {get;set;} = null!;
+    public DbSet<CareerRequest> CareerRequests {get;set;} = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
