@@ -38,6 +38,7 @@ public class ArticleController : Controller
 
     [Authorize]
     [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Article article, IFormFile? file)
     {
         if (ModelState.IsValid)
@@ -55,7 +56,7 @@ public class ArticleController : Controller
     public async Task<IActionResult> Details(long id)
     {
         var article = await articleService.ReadAsync(id);
-        if(article==null)
+        if(article==null || article.IsAccepted != true)
         {
             return NotFound();
         }

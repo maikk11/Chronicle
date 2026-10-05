@@ -33,10 +33,23 @@
                                 <a class="nav-link text-dark" asp-controller="Article" asp-action="Create">New article</a>
                             </li>
                         }
-                        @if (User.IsInRole("Admin"))
+                       @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Dashboard">Admin dashboard</a>
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Dashboard">
+                                    Admin dashboard
+                                    @await Component.InvokeAsync("NotificationBell", new { role = "Admin" })
+                                </a>
+                            </li>
+                        }
+
+                        @if (User.IsInRole("Revisor"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Revisor" asp-action="Dashboard">
+                                    Revisor dashboard
+                                    @await Component.InvokeAsync("NotificationBell", new { role = "Revisor" })
+                                </a>
                             </li>
                         }
                           <li class="nav-item dropdown">
