@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Chronicle.Models.ViewModels;
 using Chronicle.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Chronicle.Controllers;
 
@@ -95,6 +96,7 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult AccessDenied()
     {
         return View();
