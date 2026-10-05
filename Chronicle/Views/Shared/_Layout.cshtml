@@ -97,6 +97,14 @@
                             </ul>
                         </li>
                     </ul>
+                    <form class="d-flex" asp-controller="Article" asp-action="Search" method="get">
+                        <input type="search"
+                                name="keyword"
+                                class="form-control form-control-sm me-2"
+                                placeholder="Search articles"
+                                aria-label="Search articles" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Search</button>
+                    </form>
                 </div>
             </div>
         </nav>
