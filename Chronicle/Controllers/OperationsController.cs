@@ -113,4 +113,36 @@ public class OperationsController : Controller
         TempData["SuccessMessage"] = "Application sent.";
         return RedirectToAction("Index", "Home");
     }
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<IActionResult> CareerDetail(long id)
+    {
+        var request = await careerRequestService.FindAsync(id);
+        if (request == null)
+        {
+            return NotFound();
+        }
+
+        return View(request);
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CareerAccept(long id)
+    {
+        await careerRequestService.AcceptAsync(id);
+        TempData["SuccessMessage"] = "Role granted to the applicant.";
+        return RedirectToAction("Dashboard", "Admin");
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CareerReject(long id)
+    {
+        await careerRequestService.RejectAsync(id);
+        TempData["SuccessMessage"] = "Application rejected.";
+        return RedirectToAction("Dashboard", "Admin");
+    }
 }

@@ -1,0 +1,94 @@
+@using Chronicle.Models.Domain
+@using Chronicle.Models.ViewModels
+
+@{
+    ViewData["Title"] = "Admin dashboard";
+    var requests = ViewBag.Requests as IEnumerable<CareerRequest>;
+    var categories = ViewBag.Categories as IEnumerable<CategoryDto>;
+}
+
+<h1 class="mb-4">Admin dashboard</h1>
+
+<div class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card-body p-4">
+        <h2 class="h5 fw-semibold mb-3">Pending applications</h2>
+
+        @if (requests != null && requests.Any())
+        {
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Role</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in requests)
+                    {
+                        <tr>
+                            <td>@(request.User?.UserName ?? "Removed user")</td>
+                            <td>@(request.Role?.Name ?? "Unknown role")</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-controller="Operations"
+                                   asp-action="CareerDetail"
+                                   asp-route-id="@request.Id">Review</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted mb-0">No applications waiting.</p>
+        }
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 fw-semibold mb-0">Categories</h2>
+            <a class="btn btn-sm btn-success" asp-controller="Admin" asp-action="CreateCategory">New category</a>
+        </div>
+
+        @if (categories != null && categories.Any())
+        {
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Articles</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var category in categories)
+                    {
+                        <tr>
+                            <td>@category.Name</td>
+                            <td>@category.NumberOfArticles</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   asp-controller="Admin"
+                                   asp-action="EditCategory"
+                                   asp-route-id="@category.Id">Edit</a>
+
+                                <form asp-controller="Admin" asp-action="DeleteCategory" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@category.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted mb-0">No categories yet.</p>
+        }
+    </div>
+</div>

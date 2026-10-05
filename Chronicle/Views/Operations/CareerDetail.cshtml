@@ -1,0 +1,43 @@
+@model Chronicle.Models.Domain.CareerRequest
+
+@{
+    ViewData["Title"] = "Application detail";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-5">
+                <h1 class="h4 fw-bold mb-4">Application detail</h1>
+
+                <dl class="row mb-4">
+                    <dt class="col-sm-3">Applicant</dt>
+                    <dd class="col-sm-9">@(Model.User?.UserName ?? "Removed user")</dd>
+
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">@(Model.User?.Email ?? "Not available")</dd>
+
+                    <dt class="col-sm-3">Role</dt>
+                    <dd class="col-sm-9">@(Model.Role?.Name ?? "Unknown role")</dd>
+                </dl>
+
+                <p class="fw-semibold mb-1">Motivation</p>
+                <p style="white-space: pre-wrap;">@Model.Body</p>
+
+                <div class="d-flex gap-2 mt-5">
+                    <form asp-controller="Operations" asp-action="CareerAccept" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-success">Accept</button>
+                    </form>
+
+                    <form asp-controller="Operations" asp-action="CareerReject" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-outline-danger">Reject</button>
+                    </form>
+
+                    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-link text-muted text-decoration-none">Back to dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

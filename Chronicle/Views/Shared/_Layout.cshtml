@@ -33,6 +33,12 @@
                                 <a class="nav-link text-dark" asp-controller="Article" asp-action="Create">New article</a>
                             </li>
                         }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Dashboard">Admin dashboard</a>
+                            </li>
+                        }
                           <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark"
                             href="#"

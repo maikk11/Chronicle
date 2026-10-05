@@ -1,0 +1,32 @@
+@model Chronicle.Models.Domain.Category
+
+@{
+    ViewData["Title"] = "New category";
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-5">
+                <h1 class="h4 fw-bold mb-4">New category</h1>
+
+                <form asp-controller="Admin" asp-action="CreateCategory" method="post">
+                    <div class="mb-4">
+                        <label asp-for="Name" class="form-label fw-semibold">Name</label>
+                        <input asp-for="Name" class="form-control border-2" style="border-radius: 12px;" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-link text-muted text-decoration-none">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
