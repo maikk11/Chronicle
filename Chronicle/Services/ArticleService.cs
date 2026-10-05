@@ -39,37 +39,13 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
             await imageService.SaveToDbAsync(imageUrl, savedArticle.Id);
         }
         var finalArticle = await articleRepository.GetAsync(savedArticle.Id);
-        return new ArticleDto
-        {
-            Id = finalArticle!.Id,
-            Title = finalArticle.Title,
-            Subtitle = finalArticle.Subtitle,
-            Body = finalArticle.Body,
-            PublishDate = finalArticle.PublishDate,
-            CreatedAt = finalArticle.CreatedAt,
-            User = finalArticle.User,
-            Category = finalArticle.Category,
-            IsAccepted = finalArticle.IsAccepted,
-            Image = finalArticle.Image
-        };
+        return MapToDto(finalArticle!);
     }
 
     public async Task<List<ArticleDto>> ReadAllAsync()
     {
         var articles = await articleRepository.GetAllAsync();
-        return articles.Select(a => new ArticleDto
-        {
-            Id = a.Id,
-            Title = a.Title,
-            Subtitle = a.Subtitle,
-            Body = a.Body,
-            PublishDate = a.PublishDate,
-            CreatedAt = a.CreatedAt,
-            IsAccepted = a.IsAccepted,
-            User = a.User,
-            Category = a.Category,
-            Image = a.Image
-        }).ToList();
+        return articles.Select(MapToDto).ToList();
     }
 
     public async Task<ArticleDto?> ReadAsync(long key)
@@ -79,19 +55,7 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
         {
             return null;
         }
-        return new ArticleDto
-        {
-            Id = article.Id,
-            Title = article.Title,
-            Subtitle = article.Subtitle,
-            Body = article.Body,
-            CreatedAt = article.CreatedAt,
-            PublishDate = article.PublishDate,
-            IsAccepted = article.IsAccepted,
-            User = article.User,
-            Category = article.Category,
-            Image = article.Image
-        };
+        return MapToDto(article);
     }
 
     public async Task<ArticleDto?> UpdateAsync(long key, Article model, IFormFile? file)
@@ -109,5 +73,31 @@ public class ArticleService : ICrudService<ArticleDto, Article, long>
     {
         var article = await articleRepository.DeleteAsync(key);
         return article != null;
+    }
+        public async Task<List<ArticleDto>> SearchAsync(string searchTerm)
+    {
+        var articles = await articleRepository.SearchAsync(searchTerm);
+
+        return articles
+            .Where(a => a.IsAccepted == true)
+            .OrderByDescending(a => a.PublishDate ?? a.CreatedAt)
+            .Select(MapToDto)
+            .ToList();
+    }
+     private static ArticleDto MapToDto(Article article)
+    {
+        return new ArticleDto
+        {
+            Id = article.Id,
+            Title = article.Title,
+            Subtitle = article.Subtitle,
+            Body = article.Body,
+            CreatedAt = article.CreatedAt,
+            PublishDate = article.PublishDate,
+            IsAccepted = article.IsAccepted,
+            User = article.User,
+            Category = article.Category,
+            Image = article.Image
+        };
     }
 }
