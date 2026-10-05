@@ -26,6 +26,20 @@ public class ArticleController : Controller
             ViewBag.Title = "All articles";
             return View(articles);
     }
+        [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> Search(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            return RedirectToAction("Index");
+        }
+
+        var articles = await articleService.SearchAsync(keyword);
+
+        ViewBag.Title = $"Search results for: {keyword}";
+        return View("Index", articles);
+    }
 
     [Authorize]
     [HttpGet]
