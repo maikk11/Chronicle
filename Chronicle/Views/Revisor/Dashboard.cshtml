@@ -1,0 +1,47 @@
+@model IEnumerable<Chronicle.Models.ViewModels.ArticleDto>
+
+@{
+    ViewData["Title"] = "Revisor dashboard";
+}
+
+<h1 class="mb-4">Articles waiting for review</h1>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        @if (Model != null && Model.Any())
+        {
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Category</th>
+                        <th>Submitted</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var article in Model)
+                    {
+                        <tr>
+                            <td>@article.Title</td>
+                            <td>@(article.User?.UserName ?? "Removed user")</td>
+                            <td>@(article.Category?.Name ?? "No category")</td>
+                            <td>@article.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-controller="Revisor"
+                                   asp-action="Detail"
+                                   asp-route-id="@article.Id">Review</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted mb-0">Nothing waiting for review.</p>
+        }
+    </div>
+</div>
