@@ -1,0 +1,58 @@
+@model Chronicle.Models.Domain.CareerRequest
+@using Microsoft.AspNetCore.Identity
+
+@{
+    ViewData["Title"] = "Work with us";
+    var roles = ViewBag.Roles as List<IdentityRole>;
+}
+
+<div class="row justify-content-center py-5">
+    <div class="col-lg-7">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="p-5" style="background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);">
+                <h1 class="text-white fw-bold mb-0">Work with us</h1>
+                <p class="text-white-50 mb-0">Apply to join the Chronicle team</p>
+            </div>
+
+            <div class="card-body p-5">
+                <form asp-controller="Operations" asp-action="CareerRequestStore" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="RoleId" class="form-label fw-semibold">Role</label>
+                        <select asp-for="RoleId" class="form-select border-2" style="border-radius: 12px;">
+                            <option value="">Select a role</option>
+                            @if (roles != null)
+                            {
+                                foreach (var role in roles)
+                                {
+                                    <option value="@role.Id">@role.Name</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="RoleId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Body" class="form-label fw-semibold">Why you</label>
+                        <textarea asp-for="Body"
+                                  class="form-control border-2"
+                                  rows="8"
+                                  placeholder="Tell us about yourself and why you want this role..."
+                                  style="border-radius: 12px;"></textarea>
+                        <span asp-validation-for="Body" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success btn-lg">Send application</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-link text-muted text-decoration-none">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -3,6 +3,8 @@ using Chronicle.Data;
 using Microsoft.AspNetCore.Identity;
 using Chronicle.Repositories;
 using Chronicle.Services;
+using Chonicle.Repositories;
+using Chonicle.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,10 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<IArticleImageRepository, ArticleImageRepository>();
 builder.Services.AddScoped<IImageService, SupabaseImageService>();
 builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<ICareerRequestRepository, CareerRequestRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ICareerRequestService, CareerRequestService>();
 
 var app = builder.Build();
 
