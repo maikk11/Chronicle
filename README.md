@@ -44,9 +44,10 @@ been granted a role sees nothing change until they sign out and back in.
 - [.NET SDK 8.0](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 - MySQL 8.0
 - dotnet-ef
-- A [Supabase](https://supabase.com) project, for article images
-- A [Mailtrap](https://mailtrap.io) inbox, for the notification emails in
-  development
+
+Article images are stored on Supabase and notification emails go to a Mailtrap
+sandbox. Both are already configured in `appsettings.json`, so no account of
+your own is needed to run the project — see [Configuration](#2-configuration).
 
 ## Tech stack
 
@@ -68,66 +69,52 @@ git clone https://github.com/maikk11/Chronicle.git
 cd Chronicle
 ```
 
-### 2. Configure secrets
+### 2. Configuration
 
-Secrets are never committed to the repository. They are supplied through the
-.NET Secret Manager, which keeps them on your machine, outside the project
-directory.
+Everything the application needs is already in `appsettings.json`: the database
+connection string, the Supabase storage keys and the SMTP credentials for the
+Mailtrap sandbox. A fresh clone runs without any further setup, provided MySQL
+is reachable.
 
-`dotnet user-secrets` resolves its storage location from the `UserSecretsId`
-declared in the `.csproj`, so the command must be run from the **project**
-directory rather than the repository root:
+> **The credentials in `appsettings.json` are committed deliberately, so that the
+> project can be reviewed without anyone having to register for two external
+> services, and they will be rotated once it has been.** This is not how it
+> should be done. Anything pushed to a public repository has to be treated as
+> already leaked, and removing it in a later commit does not help, because it
+> stays in the history.
+>
+> The application reads its configuration through `IConfiguration`, which layers
+> `appsettings.json`, User Secrets and environment variables, with the last
+> source to define a key winning. The same code therefore runs unchanged when
+> the values are supplied securely instead, which is how it was developed and
+> how it would be deployed.
 
-```bash
-cd Chronicle
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your value>"
-```
-
-If you would rather stay at the repository root, point the command at the
-project explicitly:
+The connection string assumes MySQL on `localhost:3306` with user `root` and
+password `root`. If yours differs, either edit `appsettings.json` or override it
+without touching the file:
 
 ```bash
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your value>" --project Chronicle
 ```
 
-Article images are stored on Supabase. Create a project and a storage bucket,
-then set the project URL (without a trailing slash) and the API key:
+`dotnet user-secrets` resolves its storage location from the `UserSecretsId`
+declared in the `.csproj`, so it needs either the project directory or the
+`--project` flag. Anything set this way takes precedence over `appsettings.json`
+and is never committed. The same mechanism works for any other key:
 
 ```bash
-dotnet user-secrets set "Supabase:Url" "https://<your-project>.supabase.co" --project Chronicle
 dotnet user-secrets set "Supabase:Key" "<your key>" --project Chronicle
+dotnet user-secrets list --project Chronicle
 ```
 
-The bucket paths live in `appsettings.json`. If your bucket is not named
-`ChronicleDB`, update `Supabase:Bucket` and `Supabase:PublicUrl` there.
-
-Notification emails go out over SMTP. In development they are pointed at a
-Mailtrap sandbox, which captures everything instead of delivering it:
-
-```bash
-dotnet user-secrets set "Email:User" "<your mailtrap username>" --project Chronicle
-dotnet user-secrets set "Email:Pass" "<your mailtrap password>" --project Chronicle
-```
-
-The host, port, sender and admin notification address are not secret and live in
-`appsettings.json` under `Email`.
-
-`appsettings.Development.example.json` is the reference for what needs to be
-set. It lists every configuration key the application expects, with placeholder
-values. Each key in that file needs a matching `dotnet user-secrets set`, using
-the same colon-separated path as the key's position in the JSON. Nothing in the
-example file is read at runtime — it exists purely as documentation.
-
-To confirm what you have stored:
-
-```bash
-dotnet user-secrets list
-```
+`appsettings.Development.example.json` lists every configuration key the
+application expects, with placeholder values. Nothing in it is read at runtime —
+it exists purely as documentation.
 
 ### 3. Apply the migrations
 
-With the connection string in place, create the database schema. Run this from
-the **repository root**, pointing at the project:
+Create the database schema. Run this from the **repository root**, pointing at
+the project:
 
 ```bash
 dotnet ef database update --project Chronicle
@@ -201,14 +188,25 @@ one rule that decides whether an article belongs to the signed-in user; it lives
 on its own because three actions need it and because a rule that can be tested
 without a database is a rule worth testing.
 
+The MySQL server version is pinned rather than detected. `ServerVersion.AutoDetect`
+opens a connection during startup, so an unreachable database stopped the
+application from starting at all instead of failing on the pages that need it.
+
 Every state-changing action is a POST with an antiforgery token, and every
 action that must not be public is guarded server side regardless of what the
 navigation bar shows. Hiding a link is presentation, not protection.
+
+Notifications never fail the operation that triggered them. An application is
+saved, a role is granted, an article is published, and only then is an email
+attempted; a mail server that is unreachable or misconfigured must not undo work
+that has already succeeded.
 
 ## Known limitations
 
 These are known and tracked, not forgotten:
 
+- **Credentials are committed to `appsettings.json`**, as described under
+  [Configuration](#2-configuration). Temporary, and tracked for rotation.
 - **Article visibility is decided in four places, in memory.** The article
   listing, the home page, the search and the detail guard each load their rows
   and then filter on acceptance. The rule belongs in the repository; as it
@@ -217,7 +215,8 @@ These are known and tracked, not forgotten:
   with no body, so a 404 is a blank screen. Correct over HTTP, poor for a
   visitor.
 - **A failed image upload surfaces as an unhandled exception.** If Supabase is
-  unreachable, creating an article shows a stack trace instead of a message.
+  unreachable, creating an article with a cover image shows a stack trace
+  instead of a message. Submitting without an image is unaffected.
 - **Controllers depend on concrete service classes rather than interfaces**,
   which is what keeps them out of reach of unit tests.
 - **The seeded admin password is public**, as described above.
