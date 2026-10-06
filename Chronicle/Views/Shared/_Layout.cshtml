@@ -52,6 +52,12 @@
                                 </a>
                             </li>
                         }
+                        @if (User.IsInRole("Writer"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Writer" asp-action="Dashboard">My articles</a>
+                            </li>
+                        }
                           <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark"
                             href="#"
@@ -116,6 +122,13 @@
             {
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
