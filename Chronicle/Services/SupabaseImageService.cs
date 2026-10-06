@@ -33,12 +33,14 @@ public class SupabaseImageService : IImageService
 
         var response = await httpClient.PostAsync(uploadUrl, content);
 
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            return uploadUrl;
+            var errorBody = await response.Content.ReadAsStringAsync();
+            throw new Exception(
+                $"Failed to upload image to Supabase: {(int)response.StatusCode} {response.StatusCode}. {errorBody}");
         }
 
-        throw new Exception($"Failed to upload image to Supabase: {response.ReasonPhrase}");
+        return uploadUrl;
     }
     public async Task SaveToDbAsync(string url, long articleId)
     {
