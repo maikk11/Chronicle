@@ -1,0 +1,80 @@
+@model IEnumerable<Chronicle.Models.ViewModels.ArticleDto>
+
+@{
+    ViewData["Title"] = "My articles";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">My articles</h1>
+    <a class="btn btn-success" asp-controller="Article" asp-action="Create">New article</a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        @if (Model != null && Model.Any())
+        {
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var article in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">@article.Title</div>
+                                <div class="text-muted small">@article.Subtitle</div>
+                            </td>
+                            <td>@(article.Category?.Name ?? "No category")</td>
+                            <td>
+                                @if (article.IsAccepted == true)
+                                {
+                                    <span class="badge bg-success">Published</span>
+                                }
+                                else if (article.IsAccepted == false)
+                                {
+                                    <span class="badge bg-danger">Rejected</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">In review</span>
+                                }
+                            </td>
+                            <td>@article.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end">
+                                @if (article.IsAccepted == true)
+                                {
+                                    <a class="btn btn-sm btn-outline-secondary"
+                                       asp-controller="Article"
+                                       asp-action="Details"
+                                       asp-route-id="@article.Id">View</a>
+                                }
+
+                                <a class="btn btn-sm btn-outline-primary"
+                                   asp-controller="Article"
+                                   asp-action="Edit"
+                                   asp-route-id="@article.Id">Edit</a>
+
+                                <form asp-controller="Article" asp-action="Delete" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete this article? This cannot be undone.');">
+                                    <input type="hidden" name="id" value="@article.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted mb-0">You have not written any articles yet.</p>
+        }
+    </div>
+</div>
