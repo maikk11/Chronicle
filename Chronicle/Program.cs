@@ -11,12 +11,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Read once, with an explicit message if it is missing. The value is not in the
+// repository: it is supplied through user secrets or environment variables, and
+// appsettings.json carries a localhost default so a fresh clone starts.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException(
+        "ConnectionStrings:DefaultConnection is not configured. See the README for how to set it.");
+
+// The server version is pinned rather than detected. AutoDetect opens a
+// connection at startup, so an unreachable database stopped the application
+// from starting at all instead of failing on the pages that need it.
 builder.Services.AddDbContext<ChronicleDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        // Open a connection at startup of application. In production will need to be replaced with explicit version.
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-    ));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 0))));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
