@@ -44,7 +44,7 @@ public class ArticleController : Controller
         return View("Index", articles);
     }
 
-    [Authorize]
+    [Authorize(Roles = "Writer")]
     [HttpGet]
     public async Task<IActionResult> Create()
     {
@@ -53,7 +53,7 @@ public class ArticleController : Controller
         return View(new Article());
     }
 
-    [Authorize]
+    [Authorize(Roles = "Writer")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Article article, IFormFile? file)
